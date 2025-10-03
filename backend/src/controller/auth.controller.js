@@ -4,7 +4,7 @@ exports.register = async (req, res) => {
   try {
     const { username, password } = req.body;
     const { user, accessToken, refreshToken } = await registerUser(username, password);
-    
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: false, 
@@ -18,7 +18,6 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       message: "User registered successfully",
-      user,
     });
   } catch (err) {
     if (err.message === "USER_EXISTS") {
@@ -46,7 +45,6 @@ exports.login = async (req, res) => {
 
     res.status(200).json({
       message: "Logged in successfully",
-      user,
     });
   } catch (err) {
     if (err.message === "INVALID_USER" || err.message === "INVALID_PASSWORD") {
