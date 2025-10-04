@@ -1,6 +1,6 @@
 const express = require("express");
 const verifyAccessToken = require("../middlewares/auth.middleware");
-// const createPostController = require('../controller/createPost.controller')
+const {createPostController} = require("../controller/Post.controller");
 const multer = require("multer");
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post(
   "/",
-  verifyAccessToken,
+  verifyAccessToken, //req.user = userData 
   upload.single("image"),
   createPostController
 );

@@ -1,25 +1,33 @@
 const { GoogleGenAI } = require("@google/genai");
 
-async function generateCaption(imageUrl) {
+async function generateCaption(base64ImageData) {
   const ai = new GoogleGenAI({});
-
-  const response = await fetch(imageUrl);
-  const imageArrayBuffer = await response.arrayBuffer();
-  const base64ImageData = Buffer.from(imageArrayBuffer).toString('base64');
 
   const result = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: [
-    {
-      inlineData: {
-        mimeType: 'image/jpeg',
-        data: base64ImageData,
-      },
+    config: {
+      systemInstruction: `
+You are a creative caption generator for social media.  
+
+Rules:
+- Generate short, catchy, and fun captions.  
+- Use emojis only if they match the mood of the image.
+- Generate a single caption per image. 
+- Keep it natural, friendly, and engaging.  
+- Avoid being too generic.  
+  `,
     },
-    { text: "Caption this image." }
-  ],
+    contents: [
+      {
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: base64ImageData,
+        },
+      },
+      { text: "Caption this image." },
+    ],
   });
-  
+
   return result.text;
 }
 
