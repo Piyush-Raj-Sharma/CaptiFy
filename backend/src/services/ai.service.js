@@ -1,14 +1,26 @@
 const { GoogleGenAI } = require("@google/genai");
 
-// The client gets the API key from the environment variable `GEMINI_API_KEY`.
-const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
+async function generateCaption(imageUrl) {
+  const ai = new GoogleGenAI({});
 
-async function main() {
-  const response = await ai.models.generateContent({
+  const response = await fetch(imageUrl);
+  const imageArrayBuffer = await response.arrayBuffer();
+  const base64ImageData = Buffer.from(imageArrayBuffer).toString('base64');
+
+  const result = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: "Explain how AI works in a few words",
+    contents: [
+    {
+      inlineData: {
+        mimeType: 'image/jpeg',
+        data: base64ImageData,
+      },
+    },
+    { text: "Caption this image." }
+  ],
   });
-  console.log(response.text);
+  
+  return result.text;
 }
 
-main();
+module.exports = generateCaption;
